@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Microservice</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Book Microservice</h1>
+  <p class="description">This service provides a JSON API for accessing book data. Below is a live preview of <code>/api/books</code> response.</p>
+
+  <div id="book-list">Loading books...</div>
+
+  <script>
+    fetch('/api/books')
+      .then(response => {
+        if (!response.ok) throw new Error("API error");
+        return response.json();
+      })
+      .then(data => {
+        const container = document.getElementById('book-list');
+        container.innerHTML = '';
+
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = '<p>No books found.</p>';
+          return;
+        }
+
+        data.forEach(book => {
+          const el = document.createElement('div');
+          el.className = 'book';
+          el.innerHTML = `
+            <div class="book-title">${book.title || 'Untitled Book'}</div>
+            <div class="book-author">${book.author || 'Unknown Author'}</div>
+          `;
+          container.appendChild(el);
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('book-list').innerHTML = '<p class="error">Failed to load books.</p>';
+      });
+  </script>
+</body>
+</html>
